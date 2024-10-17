@@ -8,9 +8,74 @@ public class OrderRepository
 {
     private readonly string _connectionString;
 
-    public OrderRepository(string connectionString)
+    public OrderRepository(IConfiguration configuration)
     {
-        _connectionString = connectionString;
+        _connectionString = configuration.GetConnectionString("OrderDatabase");
+    }
+
+    // Método para crear una nueva orden
+    public int CreateOrder(Order order)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+
+            // Verificar si es una compra o una venta
+            if (order.OrderType == "Purchase")
+            {
+                if (order.SupplierID == null)
+                {
+                    throw new InvalidOperationException("SupplierID es requerido para compras.");
+                }
+            }
+            else if (order.OrderType == "Sale")
+            {
+                if (order.CustomerID == null)
+                {
+                    throw new InvalidOperationException("CustomerID es requerido para ventas.");
+                }
+            }
+
+            string query = @"
+            INSERT INTO Orders (CustomerID, SupplierID, OrderDate, TotalAmount, StatusOrder, OrderType)
+            VALUES (@CustomerID, @SupplierID, @OrderDate, @TotalAmount, @StatusOrder, @OrderType);
+            SELECT SCOPE_IDENTITY();";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@CustomerID", (object)order.CustomerID ?? DBNull.Value);
+                command.Parameters.AddWithValue("@SupplierID", (object)order.SupplierID ?? DBNull.Value);
+                command.Parameters.AddWithValue("@OrderDate", order.OrderDate);
+                command.Parameters.AddWithValue("@TotalAmount", order.TotalAmount);
+                command.Parameters.AddWithValue("@StatusOrder", order.StatusOrder);
+                command.Parameters.AddWithValue("@OrderType", order.OrderType);
+
+                // Ejecutar el comando y devolver el ID de la nueva orden
+                return Convert.ToInt32(command.ExecuteScalar());
+            }
+        }
+    }
+
+
+    // Método para actualizar el TotalAmount de una orden
+    public void UpdateTotalAmount(int orderId, decimal totalAmount)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            string query = @"
+                UPDATE Orders 
+                SET TotalAmount = @TotalAmount 
+                WHERE OrderID = @OrderID";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@TotalAmount", totalAmount);
+                command.Parameters.AddWithValue("@OrderID", orderId);
+
+                command.ExecuteNonQuery();
+            }
+        }
     }
 
     // Método para agregar una nueva orden

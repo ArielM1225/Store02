@@ -7,8 +7,14 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Obtener la cadena de conexión desde appsettings.json
+//var connectionString = builder.Configuration.GetConnectionString("OrderDatabase");
+
 // Servicios del repositorio
 builder.Services.AddScoped<CustomerRepository>();
+builder.Services.AddScoped<OrderRepository>();
+builder.Services.AddScoped<OrderDetailRepository>();
+
 
 // Add services to the container.
 builder.Services.AddSingleton<JwtService>();

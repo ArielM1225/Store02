@@ -5,9 +5,31 @@ public class OrderDetailRepository
 {
     private readonly string _connectionString;
 
-    public OrderDetailRepository(string connectionString)
+    public OrderDetailRepository(IConfiguration configuration)
     {
-        _connectionString = connectionString;
+        _connectionString = configuration.GetConnectionString("OrderDatabase");
+    }
+
+    // Método para crear un nuevo detalle de orden
+    public void CreateOrderDetail(OrderDetail orderDetail)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            string query = @"
+                INSERT INTO OrderDetails (OrderID, ProductID, Quantity, Price) 
+                VALUES (@OrderID, @ProductID, @Quantity, @Price)";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@OrderID", orderDetail.OrderID);
+                command.Parameters.AddWithValue("@ProductID", orderDetail.ProductID);
+                command.Parameters.AddWithValue("@Quantity", orderDetail.Quantity);
+                command.Parameters.AddWithValue("@Price", orderDetail.Price);
+
+                command.ExecuteNonQuery();
+            }
+        }
     }
 
     //// Método para agregar un detalle a la orden

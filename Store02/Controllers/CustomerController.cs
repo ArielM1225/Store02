@@ -23,19 +23,19 @@ namespace Store02.Controllers
         [HttpPost]
         public IActionResult CreateCustomer([FromBody] Customer customer)
         {
-            // Obtenemos el email del JWT token autenticado
-            var customerEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-
-            if (customerEmail == null)
+            try
             {
-                return Unauthorized();
+                _customerRepository.CreateCustomer(customer);
+                return Ok("Customer created successfully");
             }
-
-            // Solo se permite crear si el cliente no ha sido registrado antes
-            customer.Email = customerEmail;
-            _customerRepository.CreateCustomer(customer);
-
-            return Ok("Customer created successfully");
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);  // 409 Conflict
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);  // 500 Internal Server Error
+            }
         }
 
         //[HttpPut("{id}")]
