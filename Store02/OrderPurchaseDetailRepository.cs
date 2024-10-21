@@ -31,4 +31,27 @@ public class OrderPurchaseDetailRepository
             }
         }
     }
+
+    // Método para agregar detalle a order purchase
+    public void AddOrderPurchaseDetail(OrderPurchaseDetail orderPurchaseDetail)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            string query = @"
+            INSERT INTO OrderPurchaseDetail (OrderPID, ProductID, Quantity, Price)
+            VALUES (@OrderPID, @ProductID, @Quantity, @Price)";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@OrderPID", orderPurchaseDetail.OrderPID);
+                command.Parameters.AddWithValue("@ProductID", orderPurchaseDetail.ProductID);
+                command.Parameters.AddWithValue("@Quantity", orderPurchaseDetail.Quantity);
+                command.Parameters.AddWithValue("@Price", orderPurchaseDetail.Price);
+
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+
 }
