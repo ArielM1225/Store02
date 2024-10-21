@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Store02.Models;
 using System.Data;
+using System.Runtime.CompilerServices;
 
 public class CustomerRepository
 {
@@ -56,6 +57,30 @@ public class CustomerRepository
                     // Manejo de errores específicos de SQL
                     throw new Exception("Error al crear el cliente: " + ex.Message);
                 }
+            }
+        }
+    }
+
+    public bool UpdateContact(int customerID, string newEmail, string newPhoneNumber)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+
+            // Consulta SQL para actualizar los datos de contacto del customer
+            string query = @"
+            UPDATE Customers
+            SET Email = @Email, PhoneNumber = @PhoneNumber, UpdatedAt = GETDATE()
+            WHERE CustomerID = @CustomerID";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@Email", newEmail);
+                command.Parameters.AddWithValue("@PhoneNumber", newPhoneNumber);
+                command.Parameters.AddWithValue("@CustomerID", customerID);
+
+                int affectedrows = command.ExecuteNonQuery();
+                return affectedrows > 0;
             }
         }
     }
