@@ -12,8 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Servicios del repositorio
 builder.Services.AddScoped<CustomerRepository>();
-builder.Services.AddScoped<OrderRepository>();
-builder.Services.AddScoped<OrderDetailRepository>();
+//builder.Services.AddScoped<OrderRepository>();
+//builder.Services.AddScoped<OrderDetailRepository>();
+builder.Services.AddScoped<OrderPurchaseRepository>();
+builder.Services.AddScoped<OrderPurchaseDetailRepository>();
+builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<SupplierRepository>();
 
 
 // Add services to the container.

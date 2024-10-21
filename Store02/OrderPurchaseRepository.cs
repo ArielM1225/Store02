@@ -14,7 +14,7 @@ public class OrderPurchaseRepository
     }
 
     // Método para crear una orden de Ingreso
-    public int CreatOrderIn(Order order)
+    public int CreatOrderIn(OrderPurchase orderPurchase)
     {
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
@@ -23,12 +23,13 @@ public class OrderPurchaseRepository
             // Consulta SQL para insertar una nueva orden de compra
             string query = @"
             INSERT INTO OrderPurchase (SupplierID, StatusOrder)
-            VALUES (@SupplierID, @StatusOrder)";
+            VALUES (@SupplierID, @StatusOrder);
+            SELECT SCOPE_IDENTITY();"; // Obtiene el último valor de OrderPID generado
 
             using (SqlCommand command = new SqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue("@SupplierID", (object)order.CustomerID ?? DBNull.Value);
-                command.Parameters.AddWithValue("@StatusOrder", order.StatusOrder);
+                command.Parameters.AddWithValue("@SupplierID", (object)orderPurchase.SupplierID ?? DBNull.Value);
+                command.Parameters.AddWithValue("@StatusOrder", orderPurchase.StatusOrder);
 
                 // Ejecutar el comando y devolver el ID de la nuva orden
                 return Convert.ToInt32(command.ExecuteScalar());
