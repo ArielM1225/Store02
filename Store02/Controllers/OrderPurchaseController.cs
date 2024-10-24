@@ -22,7 +22,7 @@ namespace Store02.Controllers
             _orderPurchaseDetailRepository = orderPurchaseDetailRepository;
         }
 
-        [HttpPost]
+        [HttpPost("create-order-with-details")] // Ruta específica
         public IActionResult CreateOrderPurchaseWithDetails([FromBody] OrderPurchaseWithDetailsDTO orderWithDetails)
         {
             // Validar si tiene al menos un detalle de la orden
@@ -62,6 +62,102 @@ namespace Store02.Controllers
             _orderPurchaseRepository.UpdateTotalAmount(newOrderId, totalAmount);
 
             return Ok("OrderPurchase and OrderPurchaseDetail created successfully");
+        }
+
+        [HttpPost("add-order-detail")] // Otra ruta específica
+        //public IActionResult AddOrderPurchaseDetail([FromBody] OrderPurchaseDetailDTO orderPurchaseDetailDTO)
+        //{
+        //    if (orderPurchaseDetailDTO == null)
+        //    {
+        //        return BadRequest("Order purchase detail is null.");
+        //    }
+
+        //    try
+        //    {
+        //        // Crear el modelo desde el DTO
+        //        var orderPurchaseDetail = new OrderPurchaseDetail
+        //        {
+        //            OrderPID = orderPurchaseDetailDTO.OrderPID,
+        //            ProductID = orderPurchaseDetailDTO.ProductID,
+        //            Quantity = orderPurchaseDetailDTO.Quantity,
+        //            Price = orderPurchaseDetailDTO.Price
+        //        };
+
+        //        // Verificar si se pudo agregar
+        //        bool isAdded = _orderPurchaseDetailRepository.AddOrderPurchaseDetail(orderPurchaseDetail);
+        //        if (!isAdded)
+        //        {
+        //            return BadRequest("Cannot add detail. The order is not in 'Pending' status.");
+        //        }
+
+        //        return Ok("Order purchase detail added successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
+
+        public IActionResult AddOrderPurchaseDetail([FromBody] OrderPurchaseDetailDTO orderPurchaseDetailDTO)
+        {
+            if (orderPurchaseDetailDTO == null)
+            {
+                return BadRequest("Order purchase detail is null.");
+            }
+
+            try
+            {
+                // Crear el modelo desde el DTO
+                var orderPurchaseDetail = new OrderPurchaseDetail
+                {
+                    OrderPID = orderPurchaseDetailDTO.OrderPID,
+                    ProductID = orderPurchaseDetailDTO.ProductID,
+                    Quantity = orderPurchaseDetailDTO.Quantity,
+                    Price = orderPurchaseDetailDTO.Price
+                };
+
+                // Verificar si se pudo agregar
+                bool isAdded = _orderPurchaseDetailRepository.AddOrderPurchaseDetail(orderPurchaseDetail);
+                if (!isAdded)
+                {
+                    return BadRequest("Cannot add detail. The order is not in 'Pending' status.");
+                }
+
+                return Ok("Order purchase detail added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+        [HttpPut("UpdateStatus/{orderPID}")]
+        public IActionResult UpdateStatusOrder(int orderPID, [FromBody] OrderPurchaseUpdateStatusDTO orderUpdateStatus)
+        {
+            if (orderUpdateStatus == null ||
+                string.IsNullOrEmpty(orderUpdateStatus.StatusOrder))
+            {
+                return BadRequest("Invalid status data.");
+            }
+
+            try
+            {
+                // Llamar al repositorio para actualizar el statusOrder
+                bool isUpdated = _orderPurchaseRepository.UpdateStatus(orderPID, orderUpdateStatus.StatusOrder);
+                if (isUpdated)
+                {
+                    return Ok("StatusOrder updated successfully");
+                }
+                else
+                {
+                    return NotFound("OrderPurchase not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
     }

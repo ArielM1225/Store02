@@ -53,8 +53,8 @@ public class ProductRepository
                 command.Parameters.AddWithValue("@NewPrice", newPrice);
                 command.Parameters.AddWithValue("@ProductID", productID);
 
-                int affectedrows = command.ExecuteNonQuery(); // Ejecuta la consulta
-                return affectedrows > 0; // Retorna true si se actualizó una fila
+                int affectedRows = command.ExecuteNonQuery(); // Ejecuta la consulta
+                return affectedRows > 0; // Retorna true si se actualizó una fila
             }
         }
     }
@@ -79,8 +79,8 @@ public class ProductRepository
                 command.Parameters.AddWithValue("@NewDescriptionProduct", newDescriptionProduct);
                 command.Parameters.AddWithValue("@ProductID", productID);
 
-                int affectedrows = command.ExecuteNonQuery();
-                return affectedrows > 0;
+                int affectedRows = command.ExecuteNonQuery();
+                return affectedRows > 0;
             }
         }
     }

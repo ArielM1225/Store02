@@ -92,6 +92,7 @@ CREATE TABLE OrderHistory (
     HistoryDate DATETIME NOT NULL DEFAULT GETDATE()
 );
 
+USE STORE02
 
 SELECT * FROM Customers;
 SELECT * FROM Suppliers;
@@ -111,3 +112,12 @@ DROP TABLE Suppliers
 
 DROP DATABASE STORE02
 USE master
+
+DELETE FROM OrderHistory
+WHERE OrderID = 22
+
+DELETE FROM OrderPurchaseDetail
+WHERE OrderPID = 22
+
+DELETE FROM OrderPurchase
+WHERE OrderPID = 22

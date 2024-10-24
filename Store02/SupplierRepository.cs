@@ -53,8 +53,8 @@ public class SupplierRepository
                 command.Parameters.AddWithValue("@ContactInfo", newContactInfo);
                 command.Parameters.AddWithValue("@SupplierID", supplierID);
 
-                int affectedrows = command.ExecuteNonQuery();
-                return affectedrows > 0;
+                int affectedRows = command.ExecuteNonQuery();
+                return affectedRows > 0;
             }
         }
     }

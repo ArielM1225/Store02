@@ -79,8 +79,8 @@ public class CustomerRepository
                 command.Parameters.AddWithValue("@PhoneNumber", newPhoneNumber);
                 command.Parameters.AddWithValue("@CustomerID", customerID);
 
-                int affectedrows = command.ExecuteNonQuery();
-                return affectedrows > 0;
+                int affectedRows = command.ExecuteNonQuery();
+                return affectedRows > 0;
             }
         }
     }

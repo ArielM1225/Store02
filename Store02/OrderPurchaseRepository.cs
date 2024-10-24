@@ -57,4 +57,29 @@ public class OrderPurchaseRepository
             }
         }
     }
- }
+
+    // Método para modificar el status del orderpurchase
+    public bool UpdateStatus(int orderPID, string newStatusOrder)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+
+            // Consulta SQL para actualizar el statusOrder
+            string query = @"
+            UPDATE OrderPurchase
+            SET StatusOrder = @StatusOrder
+            WHERE OrderPID = @OrderPID";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@StatusOrder", newStatusOrder);
+                command.Parameters.AddWithValue("@OrderPID", orderPID);
+
+                int affectedRows = command.ExecuteNonQuery();
+                return affectedRows > 0;
+            }
+        }
+    }
+
+}
